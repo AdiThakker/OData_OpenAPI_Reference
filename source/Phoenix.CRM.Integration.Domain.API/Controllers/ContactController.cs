@@ -5,6 +5,7 @@ namespace Phoenix.CRM.Integration.Domain.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class ContactController : ControllerBase
     {
         // GET: api/Contact
