@@ -8,18 +8,16 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace Phoenix.CRM.Integration.Domain.API.Controllers
 {
-    [ApiVersion("1.0")]
-    [ODataRoutePrefix("Contact")]
 
-    public class ContactController : ODataController
+    [ApiVersion("1.0")]
+    [ODataRoutePrefix("Orders")]
+    public class OrdersController : ODataController
     {
         [ODataRoute("({key})")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(Contact), Status200OK)]
+        [ProducesResponseType(typeof(Order), Status200OK)]
         [ProducesResponseType(Status404NotFound)]
         [EnableQuery(AllowedQueryOptions = Select)]
-        public SingleResult<Contact> Get(int key) => SingleResult.Create(new[] { new Contact() { Id = key } }.AsQueryable());
-
-
+        public SingleResult<Order> Get(int key) => SingleResult.Create(new[] { new Order() { Id = key } }.AsQueryable());
     }
 }

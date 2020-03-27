@@ -1,14 +1,14 @@
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Builder;
+using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Mvc;
 using Phoenix.CRM.Integration.Domain.API.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNet.OData;
 using static Microsoft.OData.ODataUrlKeyDelimiter;
 
 namespace Phoenix.CRM.Integration.Domain.API
@@ -29,7 +29,7 @@ namespace Phoenix.CRM.Integration.Domain.API
             // note: Endpoint Routing is enabled by default; however, it is unsupported by OData and MUST be false
             services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Latest);
             services.AddApiVersioning(options => options.ReportApiVersions = true);
-            services.AddOData().EnableApiVersioning();    
+            services.AddOData().EnableApiVersioning();
             services.AddODataApiExplorer(
                 options =>
                 {
