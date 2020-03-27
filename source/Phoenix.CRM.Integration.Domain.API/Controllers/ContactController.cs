@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Phoenix.CRM.Integration.Entities;
 using System.Collections.Generic;
 using System.Linq;
-using static Microsoft.AspNet.OData.Query.AllowedQueryOptions;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace Phoenix.CRM.Integration.Domain.API.Controllers
@@ -27,7 +26,7 @@ namespace Phoenix.CRM.Integration.Domain.API.Controllers
         [Produces("application/json")]
         [ProducesResponseType(typeof(Contact), Status200OK)]
         [ProducesResponseType(Status404NotFound)]
-        [EnableQuery(AllowedQueryOptions = Select)]
+        //[EnableQuery(AllowedQueryOptions = Select)]
         public SingleResult<Contact> Get(string key) => SingleResult.Create(new[] { new Contact() { FirstName = key, LastName = "Something", Address = "Unkown", City = "New York City", State = "NY" } }.AsQueryable());
 
 
