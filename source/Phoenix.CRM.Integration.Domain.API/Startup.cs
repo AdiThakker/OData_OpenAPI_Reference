@@ -4,6 +4,7 @@ using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -22,23 +23,20 @@ namespace Phoenix.CRM.Integration.Domain.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // the sample application always uses the latest version, but you may want an explicit version such as Version_2_2
-            // note: Endpoint Routing is enabled by default; however, it is unsupported by OData and MUST be false
             services.AddMvc(options => options.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Latest);
-            services.AddApiVersioning(options => options.ReportApiVersions = true);
+            services.AddApiVersioning(options =>
+            {
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = new HeaderApiVersionReader("api-version");
+            });
             services.AddOData().EnableApiVersioning();
             services.AddODataApiExplorer(
                 options =>
                 {
-                    // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
-                    // note: the specified format code will format the version as "'v'major[.minor][-status]"
                     options.GroupNameFormat = "'v'VVV";
 
-                    // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
-                    // can also be used to control the format of the API version in route templates
                     options.SubstituteApiVersionInUrl = true;
 
 
@@ -47,7 +45,6 @@ namespace Phoenix.CRM.Integration.Domain.API
             services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, VersionedODataModelBuilder modelBuilder, IApiVersionDescriptionProvider provider)
         {
             app.UseMvc(routeBuilder =>
@@ -60,14 +57,13 @@ namespace Phoenix.CRM.Integration.Domain.API
                 // global odata query options
                 routeBuilder.Count();
 
-                routeBuilder.MapVersionedODataRoutes("odata", "api", modelBuilder.GetEdmModels());
+                routeBuilder.MapVersionedODataRoutes("odata", "api/v{apiVersion}", modelBuilder.GetEdmModels());
             });
             app.UseAuthorization();
             app.UseSwagger();
             app.UseSwaggerUI(
                 options =>
                 {
-                    // build a swagger endpoint for each discovered API version
                     foreach (var description in provider.ApiVersionDescriptions)
                     {
                         options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
