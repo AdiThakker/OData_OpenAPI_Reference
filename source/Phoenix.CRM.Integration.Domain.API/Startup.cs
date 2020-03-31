@@ -36,9 +36,8 @@ namespace Phoenix.CRM.Integration.Domain.API
                 options =>
                 {
                     options.GroupNameFormat = "'v'VVV";
-
                     options.SubstituteApiVersionInUrl = true;
-
+                    options.UseApiExplorerSettings = true;
 
                 });
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
@@ -59,6 +58,7 @@ namespace Phoenix.CRM.Integration.Domain.API
 
                 routeBuilder.MapVersionedODataRoutes("odata", "api/v{apiVersion}", modelBuilder.GetEdmModels());
             });
+
             app.UseAuthorization();
             app.UseSwagger();
             app.UseSwaggerUI(
@@ -70,5 +70,22 @@ namespace Phoenix.CRM.Integration.Domain.API
                     }
                 });
         }
+
+        //public void Configure(IApplicationBuilder app, IApiVersionDescriptionProvider provider)
+        //{
+        //    app.UseRouting();
+        //    app.UseEndpoints(builder => builder.MapControllers());
+        //    app.UseSwagger();
+        //    app.UseSwaggerUI(
+        //        options =>
+        //        {
+        //            // build a swagger endpoint for each discovered API version
+        //            foreach (var description in provider.ApiVersionDescriptions)
+        //            {
+        //                options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+        //            }
+        //        });
+        //}
+
     }
 }

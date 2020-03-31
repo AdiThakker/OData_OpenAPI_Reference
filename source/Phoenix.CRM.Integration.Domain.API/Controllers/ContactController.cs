@@ -10,7 +10,6 @@ namespace Phoenix.CRM.Integration.Domain.API.Controllers
 {
     [ApiVersion("1.0")]
     [ODataRoutePrefix("Contact")]
-    //[Route("api/v{version:apiVersion}/contactodata")]
     public class ContactController : ODataController
     {
         [ODataRoute("({key})")]
@@ -18,8 +17,26 @@ namespace Phoenix.CRM.Integration.Domain.API.Controllers
         [ProducesResponseType(typeof(Contact), Status200OK)]
         [ProducesResponseType(Status404NotFound)]
         [EnableQuery(AllowedQueryOptions = Select)]
-        public SingleResult<Contact> Get(int key) => SingleResult.Create(new[] { new Contact() { Id = key, FirstName = "John", LastName = "Doe", Address = "OData" } }.AsQueryable());
+        public SingleResult<Contact> Get(int key) => SingleResult.Create(new[]
+        {
+            new Contact() { Id = key, FirstName = "John", LastName = "Doe", Address = "OData" }
+        }.AsQueryable());
 
+        [ODataRoute]
+        [MapToApiVersion("1.0")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(Contact), Status201Created)]
+        [ProducesResponseType(Status400BadRequest)]
+        public IActionResult Post([FromBody] Contact contact)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            contact.Id = 100;
+
+            return Created(contact);
+        }
     }
 }
