@@ -15,7 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phoenix.CRM.Integration.Dom
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phoenix.CRM.Integration.Entities", "source\Phoenix.CRM.Integration.Entities\Phoenix.CRM.Integration.Entities.csproj", "{87872628-3A3C-4A2F-B12B-6A2F7FD16731}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkdownGenerator", "documentation\MarkdownGenerator\MarkdownGenerator.csproj", "{D8A21E55-D9ED-4188-A5E5-3A9ED9D9C3D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Phoenix.CRM.Integration.Domain.Documentation", "documentation\Phoenix.CRM.Integration.Domain.Documentation\Phoenix.CRM.Integration.Domain.Documentation.csproj", "{1A1109DA-805E-4FFF-8EDD-FC73A3C229D5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{59C3DAB3-1643-4913-A9EE-989CE4DB9110}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phoenix.CRM.Integration.Domain.Tests", "source\Phoenix.CRM.Integration.Domain.Tests\Phoenix.CRM.Integration.Domain.Tests.csproj", "{31F0FFDF-7A0A-4D8F-A432-68F29C6964D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +35,14 @@ Global
 		{87872628-3A3C-4A2F-B12B-6A2F7FD16731}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87872628-3A3C-4A2F-B12B-6A2F7FD16731}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87872628-3A3C-4A2F-B12B-6A2F7FD16731}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D8A21E55-D9ED-4188-A5E5-3A9ED9D9C3D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8A21E55-D9ED-4188-A5E5-3A9ED9D9C3D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8A21E55-D9ED-4188-A5E5-3A9ED9D9C3D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8A21E55-D9ED-4188-A5E5-3A9ED9D9C3D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A1109DA-805E-4FFF-8EDD-FC73A3C229D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A1109DA-805E-4FFF-8EDD-FC73A3C229D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A1109DA-805E-4FFF-8EDD-FC73A3C229D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A1109DA-805E-4FFF-8EDD-FC73A3C229D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31F0FFDF-7A0A-4D8F-A432-68F29C6964D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31F0FFDF-7A0A-4D8F-A432-68F29C6964D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31F0FFDF-7A0A-4D8F-A432-68F29C6964D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31F0FFDF-7A0A-4D8F-A432-68F29C6964D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,7 +52,9 @@ Global
 		{B0A64ED3-ADED-4F16-AB10-838E33C8D8F7} = {060C2AD0-E3C9-4E33-8BD7-45CCD1CF531C}
 		{8D2D41D0-3328-4CF4-B830-7455F646991E} = {B0A64ED3-ADED-4F16-AB10-838E33C8D8F7}
 		{87872628-3A3C-4A2F-B12B-6A2F7FD16731} = {AB72CF98-2B1C-4CD6-B4CF-6A2E19D59022}
-		{D8A21E55-D9ED-4188-A5E5-3A9ED9D9C3D0} = {AE49F3DF-7137-4D14-A349-358702E2FEEE}
+		{1A1109DA-805E-4FFF-8EDD-FC73A3C229D5} = {AE49F3DF-7137-4D14-A349-358702E2FEEE}
+		{59C3DAB3-1643-4913-A9EE-989CE4DB9110} = {060C2AD0-E3C9-4E33-8BD7-45CCD1CF531C}
+		{31F0FFDF-7A0A-4D8F-A432-68F29C6964D3} = {59C3DAB3-1643-4913-A9EE-989CE4DB9110}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BCA6287B-5AD7-4B1B-9721-8CBED57CFC6E}

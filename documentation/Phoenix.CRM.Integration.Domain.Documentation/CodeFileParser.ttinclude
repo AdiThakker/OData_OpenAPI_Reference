@@ -1,0 +1,107 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#+
+public CodeType GetTypeFromSourceFileName(string sourceFileName)
+{
+	EnvDTE.DTE dte = GetEnvDTE();
+	ProjectItem enumProjectItem = dte.Solution.FindProjectItem(sourceFileName);
+	FileCodeModel codeModel = enumProjectItem.FileCodeModel;
+
+	CodeNamespace codeNamespace = GetNamespace(codeModel.CodeElements);
+	var classType = GetType(codeModel.CodeElements);
+	  
+	return classType;
+}
+
+private EnvDTE.DTE GetEnvDTE()
+{
+    IServiceProvider hostServiceProvider = (IServiceProvider)Host;
+       
+    if (hostServiceProvider == null)
+            throw new Exception("Host property returned unexpected value (null)");
+       
+    EnvDTE.DTE dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
+       
+    if (dte == null)
+            throw new Exception("Unable to retrieve EnvDTE.DTE");
+   
+    return dte;
+}
+
+private CodeType GetType(CodeElements elements)
+{
+    foreach (CodeElement element in elements)
+    {
+        var codeType= element as CodeType;
+       
+        if (codeType!= null)
+            return codeType;
+   
+        GetType(element.Children);
+    }
+   
+    return null;
+}
+
+private List<CodeProperty> GetProperties(CodeElements elements)
+{
+    List<CodeProperty> props= new List<CodeProperty>();
+    
+    foreach (CodeElement element in elements)
+    {
+        CodeProperty prop = element as CodeProperty;
+       
+        if (prop != null)
+            props.Add(prop); 
+    }
+           
+    return props;
+}
+
+private List<CodeFunction> GetMethods(CodeElements elements)
+{
+    List<CodeFunction> methods = new List<CodeFunction>();
+       
+    foreach (CodeElement element in elements)
+    {
+        CodeFunction method = element as CodeFunction;
+       
+        if (method != null)
+            methods.Add(method);           
+    }
+   
+    return methods;
+}
+
+private CodeInterface GetInterface(CodeElements elements)
+{
+    foreach (CodeElement element in elements)
+    {
+        CodeInterface codeInterface = element as CodeInterface;
+       
+        if (codeInterface != null)
+            return codeInterface;
+   
+        GetInterface(element.Children);
+    }
+   
+    return null;
+} 
+
+private CodeNamespace GetNamespace(CodeElements elements)
+{
+    foreach (CodeElement element in elements)
+    {
+        CodeNamespace ns = element as CodeNamespace;
+       
+        if (ns != null)
+            return ns;
+    }
+   
+    return null;
+}
+#>
+

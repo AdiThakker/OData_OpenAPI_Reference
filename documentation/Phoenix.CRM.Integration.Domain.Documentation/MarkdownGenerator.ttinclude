@@ -1,0 +1,115 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@include file="$(ProjectDir)\CodeFileParser.ttinclude" #> 
+<#+   
+
+public void StartCodeBlock(){ WriteLine("```csharp");}
+
+public void EndCodeBlock(){ WriteLine("```");}
+
+private void WriteProperties(CodeType theClass)
+{
+               
+    List<CodeProperty> props = GetProperties(theClass.Children);
+        
+    int propertyCount = 0;
+    StartCodeBlock();        
+    PushIndent("\t");
+
+    foreach (CodeProperty prop in props)
+    {
+        WritePropertyDefinition(prop);
+        WriteLine(string.Empty);
+               
+        propertyCount++;
+
+    }
+    if (propertyCount == 0) 
+        WriteLine("// this class has no properties");
+
+    ClearIndent();
+    EndCodeBlock();
+        
+}
+
+private void WritePropertyDefinition(CodeProperty prop)
+{
+        
+    Write(ToAccessModifier(prop.Access) + " ");
+            Write(prop.Type.AsString + " ");
+    Write(prop.Name);
+    Write(" { ");
+    if (prop.Getter != null) Write( "get;");
+    if (prop.Setter != null) Write( "set;");
+    Write(" } ");
+}
+
+private string ToAccessModifier(vsCMAccess access)
+{
+    string acc = null;
+    switch(access)
+    {
+        case vsCMAccess.vsCMAccessProject: acc="internal";break;
+        case vsCMAccess.vsCMAccessPublic: acc="public";break;
+        case vsCMAccess.vsCMAccessPrivate: acc="private";break;
+        case vsCMAccess.vsCMAccessDefault: acc="";break;
+        case vsCMAccess.vsCMAccessProtected: acc="protected";break;
+        default: acc=" /* DONT KNOW */";break;
+    }
+    return acc;
+}
+
+private void WriteMethods(CodeType classType, bool includeConstructor = false)
+{      
+    List<CodeFunction> codeFunctions = GetMethods(classType.Children);
+        
+    int methodCount = 0;
+    StartCodeBlock();        
+    PushIndent("\t");
+
+    foreach (CodeFunction method in codeFunctions)
+    {
+        if (!includeConstructor && (method.FunctionKind == vsCMFunction.vsCMFunctionConstructor || method.FunctionKind == vsCMFunction.vsCMFunctionDestructor)) 
+            continue;
+
+        WriteMethodHeader(method);
+        WriteLine(string.Empty);
+               
+        methodCount ++;
+    }
+    ClearIndent();
+    EndCodeBlock();        
+}
+
+private void WriteMethodHeader(CodeFunction method)
+{
+        
+    Write(ToAccessModifier(method.Access) + " ");
+    Write(method.Type.AsString + " ");
+    Write(method.Name);
+    Write("(");
+               
+    foreach(CodeElement element in method.Parameters)
+    {
+        int count = 0;           
+        CodeParameter parameter = element as CodeParameter;
+       
+        if (parameter != null)
+        {
+            Write(parameter.Type.AsString + " ");
+            Write(parameter.Name);
+               
+            count++;
+
+            if(count < method.Parameters.Count)
+                Write(", ");               
+        }
+    }
+       
+    Write(")");
+}
+
+#>

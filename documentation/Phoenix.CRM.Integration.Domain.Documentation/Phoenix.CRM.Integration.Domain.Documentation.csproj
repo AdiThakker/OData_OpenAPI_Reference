@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="CodeFileParser.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CodeFileParser.tt</DependentUpon>
+    </None>
+    <None Include="MarkdownGenerator.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MarkdownGenerator.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="CodeFileParser.ttinclude">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CodeFileParser.cs</LastGenOutput>
+    </None>
+    <None Update="Contact.md">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Contact.tt</DependentUpon>
+    </None>
+    <None Update="Contact.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Contact.md</LastGenOutput>
+    </None>
+    <None Update="MarkdownGenerator.ttinclude">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MarkdownGenerator.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="CodeFileParser.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CodeFileParser.ttinclude</DependentUpon>
+    </Compile>
+    <Compile Update="MarkdownGenerator.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MarkdownGenerator.ttinclude</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>
