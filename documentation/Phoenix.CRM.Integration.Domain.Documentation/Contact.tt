@@ -7,19 +7,19 @@
 <#@ include file="$(ProjectDir)\MarkdownGenerator.ttinclude"#>
 <#@ output extension=".md" #>
 
-<# 
-	DTE dte = ((IServiceProvider)this.Host).GetCOMService(typeof(DTE)) as DTE;
-	  
-#> 
 
-Number of projects in this solution: <#=  dte.Solution.Projects.Count #>
-
-<#
-	foreach (Project item in dte.Solution.Projects)
-    {
-		WriteLine(item.Name);
-    }
+<#  
+	var classType = GetTypeFromSourceFileName(@"$(SolutionDir)\source\Phoenix.CRM.Integration.Entities\Contact.cs");
+	WriteLine(classType.FullName);
 #>
+
+# The Class referenced here is : <#= classType.Name#>
+
+# Important Properties <#=  Environment.NewLine #>
+<# WriteProperties(classType);  #>
+
+
+
 
 
 

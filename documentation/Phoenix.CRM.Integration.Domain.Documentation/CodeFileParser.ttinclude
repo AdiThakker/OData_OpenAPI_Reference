@@ -35,12 +35,15 @@ private CodeType GetType(CodeElements elements)
 {
     foreach (CodeElement element in elements)
     {
-        var codeType= element as CodeType;
+        var codeType = element as CodeType;
        
         if (codeType!= null)
             return codeType;
    
-        GetType(element.Children);
+        codeType = GetType(element.Children);
+
+        if (codeType != null)
+            return codeType;
     }
    
     return null;
@@ -85,7 +88,10 @@ private CodeInterface GetInterface(CodeElements elements)
         if (codeInterface != null)
             return codeInterface;
    
-        GetInterface(element.Children);
+        codeInterface = GetInterface(element.Children);
+
+        if (codeInterface != null)
+            return codeInterface;
     }
    
     return null;
