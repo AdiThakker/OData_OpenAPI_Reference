@@ -18,96 +18,155 @@ public CodeType GetTypeFromSourceFileName(string sourceFileName)
 
 private EnvDTE.DTE GetEnvDTE()
 {
-    IServiceProvider hostServiceProvider = (IServiceProvider)Host;
-       
-    if (hostServiceProvider == null)
-            throw new Exception("Host property returned unexpected value (null)");
-       
-    EnvDTE.DTE dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
-       
-    if (dte == null)
-            throw new Exception("Unable to retrieve EnvDTE.DTE");
+	IServiceProvider hostServiceProvider = (IServiceProvider)Host;
+	   
+	if (hostServiceProvider == null)
+			throw new Exception("Host property returned unexpected value (null)");
+	   
+	EnvDTE.DTE dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
+	   
+	if (dte == null)
+			throw new Exception("Unable to retrieve EnvDTE.DTE");
    
-    return dte;
+	return dte;
 }
 
 private CodeType GetType(CodeElements elements)
 {
-    foreach (CodeElement element in elements)
-    {
-        var codeType = element as CodeType;
-       
-        if (codeType!= null)
-            return codeType;
+	foreach (CodeElement element in elements)
+	{
+		var codeType = element as CodeType;
+	   
+		if (codeType!= null)
+			return codeType;
    
-        codeType = GetType(element.Children);
+		codeType = GetType(element.Children);
 
-        if (codeType != null)
-            return codeType;
-    }
+		if (codeType != null)
+			return codeType;
+	}
    
-    return null;
+	return null;
 }
 
 private List<CodeProperty> GetProperties(CodeElements elements)
 {
-    List<CodeProperty> props= new List<CodeProperty>();
-    
-    foreach (CodeElement element in elements)
-    {
-        CodeProperty prop = element as CodeProperty;
-       
-        if (prop != null)
-            props.Add(prop); 
-    }
-           
-    return props;
+	List<CodeProperty> props= new List<CodeProperty>();
+	
+	foreach (CodeElement element in elements)
+	{
+		CodeProperty prop = element as CodeProperty;
+	   
+		if (prop != null)
+			props.Add(prop); 
+	}
+		   
+	return props;
 }
 
 private List<CodeFunction> GetMethods(CodeElements elements)
 {
-    List<CodeFunction> methods = new List<CodeFunction>();
-       
-    foreach (CodeElement element in elements)
-    {
-        CodeFunction method = element as CodeFunction;
-       
-        if (method != null)
-            methods.Add(method);           
-    }
+	List<CodeFunction> methods = new List<CodeFunction>();
+	   
+	foreach (CodeElement element in elements)
+	{
+		CodeFunction method = element as CodeFunction;
+	   
+		if (method != null)
+			methods.Add(method);           
+	}
    
-    return methods;
+	return methods;
 }
 
 private CodeInterface GetInterface(CodeElements elements)
 {
-    foreach (CodeElement element in elements)
-    {
-        CodeInterface codeInterface = element as CodeInterface;
-       
-        if (codeInterface != null)
-            return codeInterface;
+	foreach (CodeElement element in elements)
+	{
+		CodeInterface codeInterface = element as CodeInterface;
+	   
+		if (codeInterface != null)
+			return codeInterface;
    
-        codeInterface = GetInterface(element.Children);
+		codeInterface = GetInterface(element.Children);
 
-        if (codeInterface != null)
-            return codeInterface;
-    }
+		if (codeInterface != null)
+			return codeInterface;
+	}
    
-    return null;
+	return null;
 } 
 
 private CodeNamespace GetNamespace(CodeElements elements)
 {
-    foreach (CodeElement element in elements)
-    {
-        CodeNamespace ns = element as CodeNamespace;
-       
-        if (ns != null)
-            return ns;
-    }
+	foreach (CodeElement element in elements)
+	{
+		CodeNamespace ns = element as CodeNamespace;
+	   
+		if (ns != null)
+			return ns;
+	}
    
-    return null;
+	return null;
+}
+
+private void WriteClassElementsInProject(string projectPath)
+{
+	List<CodeType> codeTypes = new List<CodeType>();
+	if(projectPath != null)
+	{
+		WriteLine(projectPath);    
+		EnvDTE.DTE dte = GetEnvDTE();
+
+		WriteLine("Solution: " + dte.Solution.FullName);
+		foreach(Project project in dte.Solution.Projects)
+		{
+			WriteLine("Project: " + project.Name);
+			if(project.ProjectItems != null)
+				NavigateProjectItems(project.ProjectItems);
+		}
+			
+		
+	}
+}
+
+private void NavigateProjectItems(ProjectItems projectItems)
+{
+	foreach(EnvDTE.ProjectItem projectItem in projectItems)
+	{
+		WriteLine("Project Item: " + projectItem.Name);
+		if(projectItem.ProjectItems != null)
+			NavigateProjectItems(projectItem.ProjectItems);
+		
+		if(projectItem.SubProject != null)
+			NavigateProjectItems(projectItem.SubProject.ProjectItems);
+
+		if(projectItem.FileCodeModel != null)
+			WriteClasses(projectItem.FileCodeModel.CodeElements);
+	}
+}
+
+private void WriteClasses(CodeElements elements)
+{
+	foreach(CodeElement codeElement in elements)
+	{
+		// WriteLine(codeElement.Kind.ToString());
+		if (codeElement.Kind == EnvDTE.vsCMElement.vsCMElementNamespace)
+		{
+			WriteLine("Namespace Type: " + codeElement.FullName);
+			WriteClasses(codeElement.Children);
+		}
+
+		if (codeElement.IsCodeType && codeElement.Kind == EnvDTE.vsCMElement.vsCMElementClass)
+		{
+			WriteLine("Class Type: " + codeElement.FullName);
+			if(codeElement.Children != null)
+			{
+				WriteClasses(codeElement.Children);
+				//WriteLine("Code Type: " + codeElement.Kind);
+			}
+		}
+	}
 }
 #>
 

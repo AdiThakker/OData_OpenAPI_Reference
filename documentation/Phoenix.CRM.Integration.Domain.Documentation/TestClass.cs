@@ -8,5 +8,18 @@
         {
 
         }
+
+        class InternalClass
+        {
+
+        }
+    }
+
+    class TestClass1
+    {
+        private void MyMethod()
+        {
+
+        }
     }
 }

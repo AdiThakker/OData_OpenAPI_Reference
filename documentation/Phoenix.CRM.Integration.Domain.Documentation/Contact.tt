@@ -9,14 +9,13 @@
 
 
 <#  
-	var classType = GetTypeFromSourceFileName(@"$(SolutionDir)\source\Phoenix.CRM.Integration.Entities\Contact.cs");
-	WriteLine(classType.FullName);
+
+	WriteProjectClassesInMarkdown(@"$(SolutionDir)\Testing\Phoenix.CRM.Integration.Domain.Tests.csproj");
+	// WriteLine(classType.FullName);
+	//WriteLine("$(SolutionDir)");
 #>
 
-# The Class referenced here is : <#= classType.Name#>
 
-# Important Properties <#=  Environment.NewLine #>
-<# WriteProperties(classType);  #>
 
 
 

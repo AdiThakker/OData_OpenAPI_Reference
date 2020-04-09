@@ -112,4 +112,9 @@ private void WriteMethodHeader(CodeFunction method)
     Write(")");
 }
 
+private void WriteProjectClassesInMarkdown(string projectPath)
+{
+    WriteClassElementsInProject(projectPath);
+}
+
 #>
