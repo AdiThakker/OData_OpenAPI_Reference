@@ -3,181 +3,87 @@
 <#@ import namespace="EnvDTE" #>
 <#@ import namespace="System.Diagnostics" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#+
-public CodeType GetTypeFromSourceFileName(string sourceFileName)
-{
-	EnvDTE.DTE dte = GetEnvDTE();
-	ProjectItem enumProjectItem = dte.Solution.FindProjectItem(sourceFileName);
-	FileCodeModel codeModel = enumProjectItem.FileCodeModel;
+<#+ 
 
-	CodeNamespace codeNamespace = GetNamespace(codeModel.CodeElements);
-	var classType = GetType(codeModel.CodeElements);
-	  
-	return classType;
-}
+public CodeType GetClassType(string fileName)
+	{
 
-private EnvDTE.DTE GetEnvDTE()
-{
-	IServiceProvider hostServiceProvider = (IServiceProvider)Host;
+		IServiceProvider hostServiceProvider = (IServiceProvider)Host;
 	   
-	if (hostServiceProvider == null)
-			throw new Exception("Host property returned unexpected value (null)");
+		if (hostServiceProvider == null)
+				throw new Exception("Host property returned unexpected value (null)");
 	   
-	EnvDTE.DTE dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
+		EnvDTE.DTE dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
 	   
-	if (dte == null)
-			throw new Exception("Unable to retrieve EnvDTE.DTE");
-   
-	return dte;
-}
+		if (dte == null)
+				throw new Exception("Unable to retrieve EnvDTE.DTE");  
+	
+
+		if(string.IsNullOrWhiteSpace(fileName))
+			throw new ArgumentNullException($"Invalid {fileName} argument");
+
+		ProjectItem projectItem = dte.Solution.FindProjectItem(fileName);
+		if (projectItem != null && (projectItem as CodeType != null))
+			return projectItem as CodeType;
+		
+		foreach(Project project in dte.Solution.Projects)
+		{
+			if(project.ProjectItems != null)
+			{
+				var item = FindProjItem(project.ProjectItems, fileName);
+				if(item != null && item.Name.Equals(fileName))
+				{
+					return GetType(item.FileCodeModel.CodeElements) as CodeType;
+				}
+			}
+		}
+
+		return null;
+	}
+
+private ProjectItem FindProjItem(ProjectItems projectItems, string fileName)
+	{
+		
+		foreach(EnvDTE.ProjectItem projectItem in projectItems)
+		{
+			WriteLine(projectItem.Name);
+			if(projectItem.Name.Equals(fileName))
+				return projectItem;
+			
+			if(projectItem.ProjectItems != null)
+			{
+				var item = FindProjItem(projectItem.ProjectItems, fileName);
+				if(item != null && item.Name.Equals(fileName))
+					return item;
+			}
+
+			if(projectItem.SubProject != null)
+			{
+				var item = FindProjItem(projectItem.SubProject.ProjectItems, fileName);
+				if(item != null && item.Name.Equals(fileName))
+					return item;
+			}
+		}
+		
+		return null;
+	}
 
 private CodeType GetType(CodeElements elements)
 {
 	foreach (CodeElement element in elements)
 	{
-		var codeType = element as CodeType;
+		var codeType= element as CodeType;
 	   
 		if (codeType!= null)
 			return codeType;
    
-		codeType = GetType(element.Children);
-
+		codeType= GetType(element.Children);
+   
 		if (codeType != null)
 			return codeType;
 	}
    
 	return null;
-}
-
-private List<CodeProperty> GetProperties(CodeElements elements)
-{
-	List<CodeProperty> props= new List<CodeProperty>();
-	
-	foreach (CodeElement element in elements)
-	{
-		CodeProperty prop = element as CodeProperty;
-	   
-		if (prop != null)
-			props.Add(prop); 
-	}
-		   
-	return props;
-}
-
-private List<CodeFunction> GetMethods(CodeElements elements)
-{
-	List<CodeFunction> methods = new List<CodeFunction>();
-	   
-	foreach (CodeElement element in elements)
-	{
-		CodeFunction method = element as CodeFunction;
-	   
-		if (method != null)
-			methods.Add(method);           
-	}
-   
-	return methods;
-}
-
-private CodeInterface GetInterface(CodeElements elements)
-{
-	foreach (CodeElement element in elements)
-	{
-		CodeInterface codeInterface = element as CodeInterface;
-	   
-		if (codeInterface != null)
-			return codeInterface;
-   
-		codeInterface = GetInterface(element.Children);
-
-		if (codeInterface != null)
-			return codeInterface;
-	}
-   
-	return null;
-} 
-
-private CodeNamespace GetNamespace(CodeElements elements)
-{
-	foreach (CodeElement element in elements)
-	{
-		CodeNamespace ns = element as CodeNamespace;
-	   
-		if (ns != null)
-			return ns;
-	}
-   
-	return null;
-}
-
-private void WriteClassElementsInProject(string projectPath)
-{
-	List<CodeType> codeTypes = new List<CodeType>();
-	if(projectPath != null)
-	{
-		WriteLine(projectPath);    
-		EnvDTE.DTE dte = GetEnvDTE();
-
-		WriteLine("Solution: " + dte.Solution.FullName);
-		foreach(Project project in dte.Solution.Projects)
-		{
-			WriteLine("Project: " + project.Name);
-			if(project.ProjectItems != null)
-				NavigateProjectItems(project.ProjectItems);
-		}
-			
-		
-	}
-}
-
-private void NavigateProjectItems(ProjectItems projectItems)
-{
-	foreach(EnvDTE.ProjectItem projectItem in projectItems)
-	{
-		WriteLine("Project Item: " + projectItem.Name);
-		if(projectItem.ProjectItems != null)
-			NavigateProjectItems(projectItem.ProjectItems);
-		
-		if(projectItem.SubProject != null)
-			NavigateProjectItems(projectItem.SubProject.ProjectItems);
-
-		if(projectItem.FileCodeModel != null)
-			WriteClasses(projectItem.FileCodeModel.CodeElements);
-	}
-}
-
-private void WriteClasses(CodeElements elements)
-{
-	foreach(CodeElement codeElement in elements)
-	{
-		// WriteLine(codeElement.Kind.ToString());
-		if (codeElement.Kind == EnvDTE.vsCMElement.vsCMElementNamespace)
-		{
-			WriteLine("Namespace Type: " + codeElement.FullName);
-			WriteClasses(codeElement.Children);
-		}
-
-		if (codeElement.IsCodeType && codeElement.Kind == EnvDTE.vsCMElement.vsCMElementClass)
-		{
-			WriteLine("Class Type: " + codeElement.FullName);
-			if(codeElement.Children != null)
-			{
-				WriteClasses(codeElement.Children);
-			}
-		}
-
-		if(codeElement.Kind == EnvDTE.vsCMElement.vsCMElementProperty)
-		{
-			WriteLine("Property Type: " + codeElement.Name);
-			// Parse Property
-		}
-
-		if(codeElement.Kind == EnvDTE.vsCMElement.vsCMElementFunction)
-		{
-			WriteLine("Function Type: " + codeElement.Name);
-			// Parse Function
-		}
-	}
 }
 #>
 

@@ -10,9 +10,13 @@
 
 <#  
 
-	WriteProjectClassesInMarkdown(@"$(SolutionDir)\Testing\Phoenix.CRM.Integration.Domain.Tests.csproj");
-	// WriteLine(classType.FullName);
-	//WriteLine("$(SolutionDir)");
+	var classType = Type("TestClass.cs");
+	if(classType != null)
+		WriteLine("Class: " + classType.Name);
+
+	classType = Type("ContactAPIController.cs");
+	if(classType != null)
+		WriteLine("Class: " + classType.Name);
 #>
 
 
