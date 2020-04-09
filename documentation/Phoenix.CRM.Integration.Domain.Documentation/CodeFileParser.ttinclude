@@ -163,8 +163,19 @@ private void WriteClasses(CodeElements elements)
 			if(codeElement.Children != null)
 			{
 				WriteClasses(codeElement.Children);
-				//WriteLine("Code Type: " + codeElement.Kind);
 			}
+		}
+
+		if(codeElement.Kind == EnvDTE.vsCMElement.vsCMElementProperty)
+		{
+			WriteLine("Property Type: " + codeElement.Name);
+			// Parse Property
+		}
+
+		if(codeElement.Kind == EnvDTE.vsCMElement.vsCMElementFunction)
+		{
+			WriteLine("Function Type: " + codeElement.Name);
+			// Parse Function
 		}
 	}
 }
